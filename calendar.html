@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendar</title>
+
+<!-- jQuery CDN -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> 
+
+<!-- jQuery UI CDN -->
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<link rel="stylesheet" href="./calendar.css">
+<script src="./calendar.js"></script>
+
+</head>
+
+<body>
+    <div id="header-menu" class="header-menu">
+        <table class="header-table">
+            <thead>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><label>Business Level</label></td>
+                    <td><input type="text" /></td>
+                    <td>Screen ID</td>
+                    <td><input type="text" /></td>
+                    <td>UI pattern</td>
+                    <td><input type="text" /></td>
+                    <td>Designed Date</td>
+                    <td><input type="text" /></td>
+                </tr>
+                <tr>
+                    <td>Designer</td>
+                    <td><input type="text" /></td>
+                    <td>Screen Name</td>
+                    <td colspan="3"><input style="width:99% !important;" type="text" /></td>
+                    <td>Confirmed Date</td>
+                    <td><input type="text" /></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="dateSearch-wrapper">
+            <span id="period-wrapper" style="color:red !important">*<span style="color:black;">기간</span></span>
+            <input type="text" id="startDate" />
+            ~
+            <input type="text" id="endDate" />
+            <button onClick="showCalendar()">조회</button>
+    </div>
+
+    <div id="calendar-wrapper" class="calendar-wrapper">
+
+        <table class="calendar-table" id="calendar-table">
+            <caption>
+                <span id="year">년</span>
+                <span id="month">월</span>
+            </caption>
+            
+            <colgroup>
+                <col width="14%"></colgroup>
+                <col width="14%"></colgroup>
+                <col width="14%"></colgroup>
+                <col width="14%"></colgroup>
+                <col width="14%"></colgroup>
+                <col width="14%"></colgroup>
+                <col width="14%"></colgroup>
+            </colgroup>
+
+            <thead>
+                <tr>
+                    <th>Sun</th>
+                    <th>Mon</th>
+                    <th>Tue</th>
+                    <th>Wed</th>
+                    <th>Thu</th>
+                    <th>Fri</th>
+                    <th>Sat</th>                
+                </tr>
+            </thead>
+
+            <tbody id="calendar-tbody">
+            </tbody>
+        </table>
+
+
+        <table class="reserve-wrapper">
+            <caption>&nbsp;</caption>
+
+            <colgroup>
+                <col width="33%">
+                <col width="33%">
+                <col width="33%">
+            </colgroup>
+
+            <thead>
+                <tr>
+                    <th>일자</th>
+                    <th>요일</th>
+                    <th>국경일</th>
+                </tr>
+            </thead>
+
+            <tbody id="reserve-tbody">
+            </tbody>
+        </table>
+
+    </div>
+    
+    <div class="calenadr-pagination">
+            <button onClick="prev()"><</button>
+            <button onClick="next()">></button>
+            <br/>
+            <span style="margin-left:40px;">pre</span>
+            <span style="margin-left:60px;">next</span>
+    </div>
+    <input type="hidden" name="calendar-active" value="false"/>
+
+    <div class="selected-date">
+        <span>선택된 일자: </span>
+        <span>(<span id="selected-Day">요일</span>)</span>
+        <span id="selected-Year"></span>년
+        <span id="selected-Month"></span>월
+        <span id="selected-Date"></span>일
+        <br/>
+        <button onClick="reservation()">적용</button>
+    </div>
+
+</body>
+</html>
