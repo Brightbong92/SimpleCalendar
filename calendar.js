@@ -77,10 +77,6 @@ function showCalendar() {
     if(validateDate(differenceDay, differenceMonth, differenceYear) == 0) return false;
 
 
-    console.log("diffday"+differenceDay);
-    console.log("diffmonth"+differenceMonth);
-    console.log("diffyear"+differenceYear);
-
     let startYear = $startDate.getFullYear();
     let startMonth = $startDate.getMonth();
     let startDay = $startDate.getDate();
@@ -223,7 +219,6 @@ function getHoliday (year, month, date) {
         type:"GET",
         async: false,
         success: function(data) {
-            console.log(data);
             if(data.length != 0) {
                 if(data[0].category == "holiday") {
                     holiday[0] = "holiday";
@@ -253,7 +248,6 @@ function reservation() {
     data.dayOfTheWeek = day;
 
     let holiday = getHoliday(year, month, date);
-    console.log("functionHoliday: "+ holiday);
     if(holiday[0] == "holiday") {
         data.holiday = "예" + "(" + holiday[1] + ")";
     }else if(holiday[0] == "notHoliday"){
@@ -317,7 +311,6 @@ let makeCalendar = function (startYear, startMonth, startDay, endDay, difference
    if(differenceYear === 0 && differenceMonth === 0 && differenceDay === 0) {
         lastDay = endDay;
    }else if(differenceYear === 0 && differenceMonth === 0){
-        console.log("#endDay"+endDay);
         if(endFlag == false) {
             if(differenceYear === 0 && differenceMonth === 0 && differenceDay <=29 ) {
                 lastDay = last[startMonth];
