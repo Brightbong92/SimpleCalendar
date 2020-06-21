@@ -30,7 +30,7 @@ $(document).ready(function () {
          monthNamesShort: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
          monthNames: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
          dateFormat: "yy-m-d", 
-    });    
+    });
 });
 
 function tableInitilize() {
@@ -60,7 +60,6 @@ const hourMinuteSecond = 24 * 60 * 60 * 1000;
 let reserveArray = new Array();
 
 function showCalendar() {
-    console.clear();
     deleteReserveList();
     
     if($('#startDate').val() === "" || $('#endDate').val() === "") {
@@ -196,6 +195,31 @@ function convertDayOfTheWeekString(dayOfTheWeek) {
         }
 }
 
+function getHoliday (year, month, date) {
+    let holiday = new Array();
+    $.ajax({
+        url:'https://api.manana.kr/calendar/' + year + '/' + month + '/' + date + '.json',
+        type:"GET",
+        async: false,
+        success: function(data) {
+            console.log(data);
+            if(data.length != 0) {
+                if(data[0].category == "holiday") {
+                    holiday[0] = "holiday";
+                    holiday[1] = data[0].name;
+                }else {
+                    holiday[0] = "notHoliday";
+                    holiday[1] = data[0].name;
+                }
+            }else {
+                holiday[0] = "false";
+            }
+        }
+    });
+
+    return holiday;
+}
+
 function reservation() {
     let day = $('#selected-Day').text();
     let year = $('#selected-Year').text();
@@ -206,12 +230,20 @@ function reservation() {
 
     data.date = year + "-" + month + "-" + date;
     data.dayOfTheWeek = day;
-    data.holiday = "구현중";
+
+    let holiday = getHoliday(year, month, date);
+    console.log("functionHoliday: "+ holiday);
+    if(holiday[0] == "holiday") {
+        data.holiday = "예" + "(" + holiday[1] + ")";
+    }else if(holiday[0] == "notHoliday"){
+        data.holiday = "아니요" + "(" + holiday[1] + ")";
+    }else {
+        data.holiday = "아니요";
+    }
 
     reserveArray.push(data);
 
     clearReservation();
-    console.clear();
 
     let reservationString = "";
     for(let value of reserveArray) {
@@ -219,12 +251,14 @@ function reservation() {
             reservationStringTemp += "<td style='text-align:center;'>"+value.date+"</td>";
         if(value.dayOfTheWeek == "일요일") {
             reservationStringTemp += "<td style='color:red; text-align:center;'>"+value.dayOfTheWeek+"</td>";
+            reservationStringTemp += "<td style='color:red; text-align:center;'>"+value.holiday+"</td>";
         }else if(value.dayOfTheWeek == "토요일") {
             reservationStringTemp += "<td style='color:blue; text-align:center;'>"+value.dayOfTheWeek+"</td>";
+            reservationStringTemp += "<td style='color:blue; text-align:center;'>"+value.holiday+"</td>";
         }else {
             reservationStringTemp += "<td style='text-align:center;'>"+value.dayOfTheWeek+"</td>";
-        }
             reservationStringTemp += "<td style='text-align:center;'>"+value.holiday+"</td>";
+        } 
         reservationStringTemp += "</tr>";
         reservationString += reservationStringTemp;
     }
