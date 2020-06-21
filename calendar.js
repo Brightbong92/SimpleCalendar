@@ -76,6 +76,11 @@ function showCalendar() {
 
     if(validateDate(differenceDay, differenceMonth, differenceYear) == 0) return false;
 
+
+    console.log("diffday"+differenceDay);
+    console.log("diffmonth"+differenceMonth);
+    console.log("diffyear"+differenceYear);
+
     let startYear = $startDate.getFullYear();
     let startMonth = $startDate.getMonth();
     let startDay = $startDate.getDate();
@@ -112,7 +117,7 @@ function prev() {
     }
 
     clearCalendar();
-    makeCalendar(prevYear, prevMonth-1, prevDay, -1, -1, -1);
+    makeCalendar(prevYear, prevMonth-1, prevDay, -1, -1, -1, -1);
     $('#startDate').val((prevYear) + "-" + (prevMonth) + "-" + prevDay);
     changeYearMonth(prevYear, changeMonthNumberString(prevMonth), prevMonth);
 
@@ -130,12 +135,11 @@ function next() {
     let differenceMonth = parseInt(( $endDate - $startDate ) / (hourMinuteSecond * 30));
     let differenceYear = parseInt(( $endDate - $startDate ) / (hourMinuteSecond * 30 * 12));
 
+
     if(validateDate(differenceYear, differenceMonth, differenceDay) == -1) {
         alert("지정한 기간까지 입니다.");
         return false;
-    }else if(validateDate(differenceYear, differenceMonth, differenceDay) == 0) {
-        return false;
-    }else{
+    }else {
         let nextYear = $startDate.getFullYear();
         let nextMonth = $startDate.getMonth();
         let nextDay = 1;
@@ -145,15 +149,32 @@ function next() {
         if(nextMonth == 11) {
             nextMonth = 0;
             nextYear++;
-            makeCalendar(nextYear, nextMonth, nextDay, $endDate.getDate(), -1, -1);
+
             $('#startDate').val((nextYear) + "-" + ((nextMonth)+1) + "-" + nextDay);
+            makeCalendar(nextYear, nextMonth, nextDay, $endDate.getDate(), -1, -1, -1);
             changeYearMonth(nextYear, changeMonthNumberString(nextMonth+1), (nextMonth+1));
             cleanSelectedDate();
         }else {
-            makeCalendar(nextYear, nextMonth+1, nextDay, $endDate.getDate(), -1, -1);
             $('#startDate').val((nextYear) + "-" + ((nextMonth)+2) + "-" + nextDay);
-            changeYearMonth(nextYear, changeMonthNumberString(nextMonth+2), (nextMonth+2));
-            cleanSelectedDate();
+
+            let nowDate = new Date($('#startDate').val());
+
+            let nowYear = nowDate.getFullYear();
+            let nowMonth = nowDate.getMonth()+1;
+
+            let endYear = $endDate.getFullYear();
+            let endMonth = $endDate.getMonth()+1;
+            let endDay = $endDate.getDate();
+
+            if(nowYear == endYear && nowMonth == endMonth) {
+                makeCalendar(nextYear, nextMonth+1, nextDay, endDay, 0, 0, -1, true);
+                changeYearMonth(nextYear, changeMonthNumberString(nextMonth+2), (nextMonth+2));
+                cleanSelectedDate();
+            }else {
+                makeCalendar(nextYear, nextMonth+1, nextDay, $endDate.getDate(), -1, -1, -1, false);
+                changeYearMonth(nextYear, changeMonthNumberString(nextMonth+2), (nextMonth+2));
+                cleanSelectedDate();
+            }
         }   
     }
 }
@@ -281,23 +302,30 @@ let validateDate = function(differenceYear, differenceMonth, differenceDay) {
         return 0;
     }else if(differenceYear == 0 && differenceMonth == 0) {
         return -1;
-    }else if(differenceYear == 0 && differenceMonth > 0) {
+    }else if(differenceYear == 0 && differenceMonth > 0 && differenceDay != 0) {
         return 1;
     }
 }
 
 
-let makeCalendar = function (startYear, startMonth, startDay, endDay, differenceYear, differenceMonth, differenceDay) {
+let makeCalendar = function (startYear, startMonth, startDay, endDay, differenceYear, differenceMonth, differenceDay, endFlag) {
    let theDate = new Date(startYear, startMonth, startDay);
    let dayOfTheWeek = theDate.getDay();
    let lastDay = 0;
+   let last = new Array(31,28,31,30,31,30,31,31,30,31,30,31);
    
    if(differenceYear === 0 && differenceMonth === 0 && differenceDay === 0) {
         lastDay = endDay;
    }else if(differenceYear === 0 && differenceMonth === 0){
-        lastDay = endDay;
+        console.log("#endDay"+endDay);
+        if(endFlag == false) {
+            if(differenceYear === 0 && differenceMonth === 0 && differenceDay <=29 ) {
+                lastDay = last[startMonth];
+            }
+        }else {
+            lastDay = endDay;
+        }
    }else {
-        let last = new Array(31,28,31,30,31,30,31,31,30,31,30,31);
         if(startYear % 4 == 0 && startYear % 100 !=0 || startYear % 400 == 0) {
             last[1] = 29;
         }
