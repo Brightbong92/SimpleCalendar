@@ -48,9 +48,9 @@
 
     <div class="dateSearch-wrapper">
             <span id="period-wrapper" style="color:red !important">*<span style="color:black;">기간</span></span>
-            <input type="text" id="startDate" />
+            <input type="text" id="startDate" readonly='true'/>
             ~
-            <input type="text" id="endDate" />
+            <input type="text" id="endDate" readonly='true'/>
             <button onClick="showCalendar()">조회</button>
     </div>
 
@@ -90,7 +90,7 @@
 
 
         <table class="reserve-wrapper">
-            <caption>&nbsp;</caption>
+            <caption>Reservation</caption>
 
             <colgroup>
                 <col width="33%">
@@ -109,10 +109,9 @@
             <tbody id="reserve-tbody">
             </tbody>
         </table>
-
     </div>
     
-    <div class="calenadr-pagination">
+    <div class="calenader-pagination">
             <button onClick="prev()"><</button>
             <button onClick="next()">></button>
             <br/>
@@ -121,6 +120,7 @@
     </div>
     <input type="hidden" name="calendar-active" value="false"/>
 
+    <footer>
     <div class="selected-date">
         <span>선택된 일자: </span>
         <span>(<span id="selected-Day">요일</span>)</span>
@@ -128,8 +128,9 @@
         <span id="selected-Month"></span>월
         <span id="selected-Date"></span>일
         <br/>
-        <button onClick="reservation()">적용</button>
+        <button onClick="showReservation()">적용</button>
     </div>
+    </footer>
 
 </body>
 </html>
