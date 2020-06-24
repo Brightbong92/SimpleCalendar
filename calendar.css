@@ -16,10 +16,10 @@
 .ui-datepicker-trigger{cursor: pointer;}
 .hasDatepicker{cursor: pointer;}
 
-.calenader-pagination {margin:20px 0px 30px 250px; position: absolute;}
-.calenader-pagination > button { padding: 20px; margin-left: 30px;}
+.calenadr-pagination {margin:20px 0px 30px 250px;}
+.calenadr-pagination > button { padding: 20px; margin-left: 30px;}
 
-.selected-date { font-size: 20px; margin:150px 0px 0px 8px}
+.selected-date { font-size: 20px; margin:30px 0px 0px 8px}
 .selected-date > span { margin-left:80px;}
 .selected-date > button { margin-left: 650px; font-size: 20px; padding:10px; width:80px; margin-top:10px;}
 
