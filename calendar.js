@@ -1,6 +1,7 @@
 //$(document).ready(function () {
     $(() => {
         tableInitialize();
+
         $.datepicker.setDefaults($.datepicker.regional['ko']); 
         $( "#startDate" ).datepicker({
              showOn: "both",
@@ -32,35 +33,46 @@
              monthNames: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
              dateFormat: "yy-m-d", 
         });
+
     });
     
+
     //function tableInitialize() {
     const tableInitialize = () => {
         let calendarTbody = "";
         let reserveTbody = "";
-        for(var i = 1; i<=5; i++) {
-            calendarTbody += "<tr>";
-            for(var j = 1; j<=7; j++) {
-                calendarTbody += "<td></td>";
+            for(let i = 1; i<=5; i++) {
+                calendarTbody += "<tr>";
+                for(let j = 1; j<=7; j++) {
+                    calendarTbody += "<td></td>";
+                }
+                calendarTbody += "</tr>";
             }
-            calendarTbody += "</tr>";
-        }
-    
-        for(var i = 1; i<=7; i++) {
-            reserveTbody += "<tr>";
-            for(var j = 1; j<=3; j++) {
-                reserveTbody += "<td></td>";
+        
+            for(let i = 1; i<=7; i++) {
+                reserveTbody += "<tr>";
+                for(let j = 1; j<=3; j++) {
+                    reserveTbody += "<td></td>";
+                }
+                reserveTbody += "</tr>";
             }
-            reserveTbody += "</tr>";
-        }
-    
-        $('#calendar-tbody').append(calendarTbody);
-        $('#reserve-tbody').append(reserveTbody);
-    
+
+            $('#calendar-tbody').append(calendarTbody);
+            $('#reserve-tbody').append(reserveTbody);
     }
+
+    
     const hourMinuteSecond = 24 * 60 * 60 * 1000;
     let reserveArray = new Array();
     
+
+    const checkValidation = () => {
+        if($('#startDate').val() === "" || $('#endDate').val() === "") {
+            alert("날짜가 비어져 있습니다.");
+            return false;
+        }
+    }
+
     const showCalendar = () => {
         deleteReserveList();
         
@@ -68,15 +80,20 @@
             alert("날짜를 선택해주세요.");
             return false;
         }
-    
+        
         let $startDate = new Date($('#startDate').val());
         let $endDate = new Date($('#endDate').val());
     
         let differenceDay = parseInt(( $endDate - $startDate ) / hourMinuteSecond);
         let differenceMonth = parseInt(( $endDate - $startDate ) / (hourMinuteSecond * 30));
         let differenceYear = parseInt(( $endDate - $startDate ) / (hourMinuteSecond * 30 * 12));
-    
-        if(validateDate(differenceDay, differenceMonth, differenceYear) == 0) return false;
+        
+        /*
+        console.log(differenceYear);
+        console.log(differenceMonth);
+        console.log(differenceDay);
+        */
+        if(validateDate(differenceYear, differenceMonth, differenceDay) === 0) return false;
     
     
         let startYear = $startDate.getFullYear();
@@ -86,10 +103,31 @@
         let endMonth = $endDate.getMonth();
         let endDay = $endDate.getDate();
     
+
+        let checkedDate = new Object();
+        checkedDate.startYear = startYear;
+        checkedDate.startMonth = startMonth;
+        checkedDate.startDay = startDay;
+        checkedDate.endYear = endYear;
+        checkedDate.endMonth = endMonth;
+        checkedDate.endDay = endDay;
+
+
+        checkedDate.endDay = endDayCheckAndReturn(checkedDate);
+        console.log("checkedDate.endDay: "+checkedDate.endDay);
+        let makedDate = new Object();
+        makedDate.startYear = startYear;
+        makedDate.startMonth = startMonth;
+        makedDate.startDay = startDay;
+        makedDate.endDay = checkedDate.endDay;
+        clearCalendar();
+        makeCalendar(makedDate);
+        /*
         clearCalendar();
         makeCalendar(startYear, startMonth, startDay, endDay, differenceYear, differenceMonth, differenceDay);
+        */
         changeYearMonth(startYear, changeMonthNumberString(startMonth+1), startMonth+1);
-    
+        
     
         $('input[type=hidden][name=calendar-active]').val("true");
         $('#startDate').val((startYear) + "-" + ((startMonth)+1) + "-" + (startDay));
@@ -97,7 +135,121 @@
     
         cleanSelectedDate();
     }
+    const endDayCheckAndReturn = (checkedDate) => {
+        let endDay = 0;
+        let endDayList = new Array(31,28,31,30,31,30,31,31,30,31,30,31);
+
+        /*
+        console.log("시작연도"+checkedDate.startYear);
+        console.log("끝나는연도"+checkedDate.endYear);
+        console.log("시작달"+checkedDate.startMonth);
+        console.log("끝나는달"+checkedDate.endMonth);
+        console.log("시작날짜"+checkedDate.startDay);
+        console.log("끝나는날짜"+checkedDate.endDay);
+        */
+
+
+        if(checkedDate.startYear === checkedDate.endYear && (checkedDate.startMonth+1) === (checkedDate.endMonth+1)) {//시작 종료 년 월 같을경우
+            endDay = checkedDate.endDay;
+            console.log("시작 종료 년 월 같을경우");
+            return endDay;
+        }
+
+        else if(checkedDate.startYear === checkedDate.endYear && (checkedDate.startMonth+1) === (checkedDate.endMonth+1) && checkedDate.startDay === checkedDate.endDay) {
+            console.log("시작 종료 년 월 일 같을 경우");
+            endDay = checkedDate.endDay;
+            return endDay;
+        }
+        
+        else if(checkedDate.startYear < checkedDate.endYear){
+            if(checkedDate.startMonth > checkedDate.endMonth) {
+                if(checkedDate.startYear % 4 == 0 && checkedDate.startYear % 100 !=0 || checkedDate.startYear % 400 == 0) {
+                    console.log("2020 = 윤년 일 경우");
+                    endDayList[1] = 29;
+                }
+                endDay = endDayList[checkedDate.startMonth];
+                return endDay;
+            }else {
+                endDay = endDayList[checkedDate.startMonth];
+                return endDay;
+            }
+        }
+
+
+        console.log("endDay two: " + endDay);
+        return checkedDate.endDay;
+
+    }
+    const makeCalendar = (makedDate) => {
+        let theDate = new Date(makedDate.startYear, makedDate.startMonth, makedDate.startDay);
+        let dayOfTheWeek = theDate.getDay();
+        let lastDay = makedDate.endDay;
+        let row = Math.ceil((dayOfTheWeek+lastDay)/7);
     
+        let dayNumber = makedDate.startDay;
+        let strTbodyInTrTd = "";
+     
+        for(let i = 1; i <= row; i++) {
+            strTbodyInTrTd += "<tr>";
+            for(let j = 1; j <= 7; j++) {
+                 if(i == 1 && j <= dayOfTheWeek || dayNumber > lastDay) {
+                     strTbodyInTrTd += "<td>&nbsp;</td>";
+                 }
+                 else {
+                     strTbodyInTrTd += "<td class='selectTd' onClick=selectDate(this)>"+dayNumber+"</td>";
+                     dayNumber++;
+                 }
+            }
+            strTbodyInTrTd += "</tr>";
+        }
+        document.getElementById("calendar-tbody").innerHTML = strTbodyInTrTd;
+    }
+    /*
+    const makeCalendar = (startYear, startMonth, startDay, endDay, differenceYear, differenceMonth, differenceDay, endFlag) => {
+       let theDate = new Date(startYear, startMonth, startDay);
+       let dayOfTheWeek = theDate.getDay();
+       let lastDay = 0;
+       let last = new Array(31,28,31,30,31,30,31,31,30,31,30,31);
+       
+       if(differenceYear === 0 && differenceMonth === 0 && differenceDay === 0) {
+            lastDay = endDay;
+       }else if(differenceYear === 0 && differenceMonth === 0){
+            if(endFlag === false) {
+                if(differenceYear === 0 && differenceMonth === 0 && differenceDay <=29 ) {
+                    lastDay = last[startMonth];
+                }
+            }else {
+                lastDay = endDay;
+            }
+       }else {
+            if(startYear % 4 == 0 && startYear % 100 !=0 || startYear % 400 == 0) {
+                last[1] = 29;
+            }
+            lastDay = last[startMonth];
+       }
+    
+       let row = Math.ceil((dayOfTheWeek+lastDay)/7);
+    
+       let dayNumber = startDay;
+       let strTbodyInTrTd = "";
+    
+       for(let i = 1; i <= row; i++) {
+           strTbodyInTrTd += "<tr>";
+           for(let j = 1; j <= 7; j++) {
+                if(i == 1 && j <= dayOfTheWeek || dayNumber > lastDay) {
+                    strTbodyInTrTd += "<td>&nbsp;</td>";
+                }
+                else {
+                    strTbodyInTrTd += "<td class='selectTd' onClick=selectDate(this)>"+dayNumber+"</td>";
+                    dayNumber++;
+                }
+           }
+           strTbodyInTrTd += "</tr>";
+       }
+       document.getElementById("calendar-tbody").innerHTML = strTbodyInTrTd;
+    }
+    */
+
     const prev = () => {
         let calendarActive = $('input[type=hidden][name=calendar-active]').val();
         let $startDate = new Date($('#startDate').val());
@@ -114,7 +266,6 @@
             alert("지정한 기간까지 입니다.");
             return false;
         }else {
-            //let prevDate = new Date();
             let prevYear = $startDate.getFullYear();
             let prevMonth = $startDate.getMonth()
             let prevDay = 1;
@@ -134,6 +285,11 @@
     }
     
     const next = () => {
+
+    }
+
+    /*
+    const next = () => {
         let $startDate = new Date($('#startDate').val());
         let $endDate = new Date($('#endDate').val());
         let calendarActive = $('input[type=hidden][name=calendar-active]').val();
@@ -152,7 +308,7 @@
             let nextYear = $startDate.getFullYear();
             let nextMonth = $startDate.getMonth();
             let nextDay = 1;
-    
+            
             clearCalendar();
     
             if(nextMonth == 11) {
@@ -160,7 +316,38 @@
                 nextYear++;
     
                 $('#startDate').val((nextYear) + "-" + ((nextMonth)+1) + "-" + nextDay);
-                makeCalendar(nextYear, nextMonth, nextDay, $endDate.getDate(), -1, -1, -1);
+
+
+
+                let startDay = $startDate.getDate();
+                let endYear = $endDate.getFullYear();
+                let endMonth = $endDate.getMonth();
+                let endDay = $endDate.getDate();
+
+
+                let checkedDate = new Object();
+                checkedDate.startYear = nextYear;
+                checkedDate.startMonth = nextMonth;
+                checkedDate.startDay = nextDay;
+                checkedDate.endYear = endYear;
+                checkedDate.endMonth = endMonth;
+                checkedDate.endDay = endDay;
+        
+        
+                endDay = endDayCheckAndReturn(checkedDate);
+                console.log("if nextMonth ==11 일때 endDay: "+endDay);
+
+
+
+                let makedDate = new Object();
+                makedDate.startYear = nextYear;
+                makedDate.startMonth = nextMonth;
+                makedDate.startDay = nextDay;
+                makedDate.endDay = endDay;
+
+                makeCalendar(makedDate);
+
+                //makeCalendar(nextYear, nextMonth, nextDay, $endDate.getDate(), -1, -1, -1);
                 changeYearMonth(nextYear, changeMonthNumberString(nextMonth+1), (nextMonth+1));
                 cleanSelectedDate();
             }else {
@@ -176,17 +363,66 @@
                 let endDay = $endDate.getDate();
     
                 if(nowYear == endYear && nowMonth == endMonth) {
-                    makeCalendar(nextYear, nextMonth+1, nextDay, endDay, 0, 0, -1, true);
+
+                    let startDay = $startDate.getDate();    
+
+                    let checkedDate = new Object();
+                    checkedDate.startYear = nowYear;
+                    checkedDate.startMonth = nowMonth;
+                    checkedDate.startDay = startDay;
+                    checkedDate.endYear = endYear;
+                    checkedDate.endMonth = endMonth;
+                    checkedDate.endDay = endDay;
+            
+            
+                    endDay = endDayCheckAndReturn(checkedDate);
+                    console.log("endDay2: "+endDay);
+
+
+                    let makedDate = new Object();
+                    makedDate.startYear = nowYear;
+                    makedDate.startMonth = nowMonth;
+                    makedDate.startDay = startDay;
+                    makedDate.endDay = endDay;
+
+                    makeCalendar(makedDate);
+
+
+                    //makeCalendar(nextYear, nextMonth+1, nextDay, endDay, 0, 0, -1, true);
                     changeYearMonth(nextYear, changeMonthNumberString(nextMonth+2), (nextMonth+2));
                     cleanSelectedDate();
                 }else {
-                    makeCalendar(nextYear, nextMonth+1, nextDay, $endDate.getDate(), -1, -1, -1, false);
+   
+    
+                    let checkedDate = new Object();
+                    checkedDate.startYear = nowYear;
+                    checkedDate.startMonth = nowMonth;
+                    checkedDate.startDay = startDay;
+                    checkedDate.endYear = endYear;
+                    checkedDate.endMonth = endMonth;
+                    checkedDate.endDay = endDay;
+            
+            
+                    endDay = endDayCheckAndReturn(checkedDate);
+                    console.log("endDay3: "+endDay);
+
+                    let makedDate = new Object();
+                    makedDate.startYear = startYear;
+                    makedDate.startMonth = startMonth;
+                    makedDate.startDay = startDay;
+                    makedDate.endDay = endDay;
+                    clearCalendar();
+                    makeCalendar(makedDate);
+
+
+                    //makeCalendar(nextYear, nextMonth+1, nextDay, $endDate.getDate(), -1, -1, -1, false);
                     changeYearMonth(nextYear, changeMonthNumberString(nextMonth+2), (nextMonth+2));
                     cleanSelectedDate();
                 }
             }   
         }
     }
+    */
     
     const selectDate = (object) => {
         let date = $(object).text();
@@ -299,64 +535,19 @@
         $('#selected-Date').text("");
     }
     
-    const validateDate = (differenceYear, differenceMonth, differenceDay) => {
+    const validateDate = (differenceYear, differenceMonth, differenceDay) => {        
         if(differenceDay < 0) {
             alert("시작날짜의 값이 더 큼니다.");
             $('#startDate').val("");
             $('#endDate').val("");
             return 0;
-        }else if(differenceYear == 0 && differenceMonth == 0) {
+        }else if(differenceYear === 0 && differenceMonth === 0) {
             return -1;
-        }else if(differenceYear == 0 && differenceMonth > 0 && differenceDay != 0) {
+        }else if(differenceYear === 0 && differenceMonth > 0 && differenceDay != 0) {
             return 1;
         }
     }
-    
-    
-    const makeCalendar = (startYear, startMonth, startDay, endDay, differenceYear, differenceMonth, differenceDay, endFlag) => {
-       let theDate = new Date(startYear, startMonth, startDay);
-       let dayOfTheWeek = theDate.getDay();
-       let lastDay = 0;
-       let last = new Array(31,28,31,30,31,30,31,31,30,31,30,31);
-       
-       if(differenceYear === 0 && differenceMonth === 0 && differenceDay === 0) {
-            lastDay = endDay;
-       }else if(differenceYear === 0 && differenceMonth === 0){
-            if(endFlag == false) {
-                if(differenceYear === 0 && differenceMonth === 0 && differenceDay <=29 ) {
-                    lastDay = last[startMonth];
-                }
-            }else {
-                lastDay = endDay;
-            }
-       }else {
-            if(startYear % 4 == 0 && startYear % 100 !=0 || startYear % 400 == 0) {
-                last[1] = 29;
-            }
-            lastDay = last[startMonth];
-       }
-    
-       let row = Math.ceil((dayOfTheWeek+lastDay)/7);
-    
-       let dayNumber = startDay;
-       let strTbodyInTrTd = "";
-    
-       for(let i = 1; i <= row; i++) {
-           strTbodyInTrTd += "<tr>";
-           for(let j = 1; j <= 7; j++) {
-                if(i == 1 && j <= dayOfTheWeek || dayNumber > lastDay) {
-                    strTbodyInTrTd += "<td>&nbsp;</td>";
-                }
-                else {
-                    strTbodyInTrTd += "<td class='selectTd' onClick=selectDate(this)>"+dayNumber+"</td>";
-                    dayNumber++;
-                }
-           }
-           strTbodyInTrTd += "</tr>";
-       }
-       document.getElementById("calendar-tbody").innerHTML = strTbodyInTrTd;
-    }
-    
+
     const changeMonthNumberString = (monthTemp) => {
         switch (monthTemp) {
             case 1: return "January";
