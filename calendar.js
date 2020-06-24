@@ -98,37 +98,26 @@ function showCalendar() {
 
 function prev() {
     let calendarActive = $('input[type=hidden][name=calendar-active]').val();
-    let $startDate = new Date($('#startDate').val());
-    let $endDate = new Date($('#endDate').val());
+    let $startDate = $('#startDate').val();
 
     if(!validatePaging($startDate, calendarActive)) return false;
 
-    let differenceDay = parseInt(( $endDate - $startDate ) / hourMinuteSecond);
-    let differenceMonth = parseInt(( $endDate - $startDate ) / (hourMinuteSecond * 30));
-    let differenceYear = parseInt(( $endDate - $startDate ) / (hourMinuteSecond * 30 * 12));
+    let prevDate = new Date($startDate);
+    let prevYear = prevDate.getFullYear();
+    let prevMonth = prevDate.getMonth()
+    let prevDay = 1;
 
-
-    if(validateDate(differenceYear, differenceMonth, differenceDay) == -1) {
-        alert("지정한 기간까지 입니다.");
-        return false;
-    }else {
-        //let prevDate = new Date();
-        let prevYear = $startDate.getFullYear();
-        let prevMonth = $startDate.getMonth()
-        let prevDay = 1;
-    
-        if(prevMonth == 0) {
-            prevMonth = 12;
-            prevYear--;
-        }
-    
-        clearCalendar();
-        makeCalendar(prevYear, prevMonth-1, prevDay, -1, -1, -1, -1);
-        $('#startDate').val((prevYear) + "-" + (prevMonth) + "-" + prevDay);
-        changeYearMonth(prevYear, changeMonthNumberString(prevMonth), prevMonth);
-    
-        cleanSelectedDate();
+    if(prevMonth == 0) {
+        prevMonth = 12;
+        prevYear--;
     }
+
+    clearCalendar();
+    makeCalendar(prevYear, prevMonth-1, prevDay, -1, -1, -1, -1);
+    $('#startDate').val((prevYear) + "-" + (prevMonth) + "-" + prevDay);
+    changeYearMonth(prevYear, changeMonthNumberString(prevMonth), prevMonth);
+
+    cleanSelectedDate();
 }
 
 function next() {
@@ -243,6 +232,7 @@ function getHoliday (year, month, date) {
             }
         }
     });
+
     return holiday;
 }
 
