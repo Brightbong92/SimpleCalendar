@@ -1,5 +1,4 @@
-//$(document).ready(function () {
-    $(() => {
+$(() => {
         tableInitialize();
 
         $.datepicker.setDefaults($.datepicker.regional['ko']); 
@@ -35,9 +34,7 @@
         });
 
     });
-    
 
-    //function tableInitialize() {
     const tableInitialize = () => {
         let calendarTbody = "";
         let reserveTbody = "";
@@ -48,7 +45,6 @@
                 }
                 calendarTbody += "</tr>";
             }
-        
             for(let i = 1; i<=7; i++) {
                 reserveTbody += "<tr>";
                 for(let j = 1; j<=3; j++) {
@@ -56,15 +52,13 @@
                 }
                 reserveTbody += "</tr>";
             }
-
             $('#calendar-tbody').append(calendarTbody);
             $('#reserve-tbody').append(reserveTbody);
     }
 
-    
     const hourMinuteSecond = 24 * 60 * 60 * 1000;
-    let reserveArray = new Array();
-    
+    //let reserveArray = new Array();
+    let reservationList = new Array();
 
     const checkValidation = () => {
         if($('#startDate').val() === "" || $('#endDate').val() === "") {
@@ -74,12 +68,12 @@
     }
 
     const showCalendar = () => {
-        deleteReserveList();
-        
         if($('#startDate').val() === "" || $('#endDate').val() === "") {
             alert("날짜를 선택해주세요.");
             return false;
         }
+        //deleteReserveList();
+        deleteReservationList();
         
         let $startDate = new Date($('#startDate').val());
         let $endDate = new Date($('#endDate').val());
@@ -119,7 +113,124 @@
         $('#startDate').val((startYear) + "-" + ((startMonth)+1) + "-" + (startDay));
         $('#endDate').val((endYear) + "-" + ((endMonth)+1) + "-" + (endDay));
         cleanSelectedDate();
+
+        let reservationPeriodDate = new Object();
+        reservationPeriodDate.startDate = $('#startDate').val();
+        reservationPeriodDate.endDate = $('#endDate').val();
+        displayReservationList(reservationPeriodDate);
+        drawingReservation();
     }
+
+    const displayReservationList = (reservationPeriodDate) => {
+        let startNewDate = new Date(reservationPeriodDate.startDate);
+        let endNewDate = new Date(reservationPeriodDate.endDate);
+
+        let startYear = startNewDate.getFullYear();
+        let startMonth = startNewDate.getMonth()+1;
+        let startDate = startNewDate.getDate();
+        let endYear = endNewDate.getFullYear();
+        let endMonth = endNewDate.getMonth()+1;
+        let endDate = endNewDate.getDate();
+
+        let totalMonths = 12;
+        let endDayList = new Array(31,28,31,30,31,30,31,31,30,31,30,31);
+
+        for(startYear; startYear <= endYear; startYear++) {
+            if(startYear % 4 == 0 && startYear % 100 !=0 || startYear % 400 == 0) {
+                endDayList[1] = 29;
+            }else {
+                endDayList[1] = 28;
+            }
+                if(startYear === endYear) {
+                    totalMonths = endMonth;
+                }
+                for(startMonth; startMonth <= totalMonths; startMonth++) {
+                    for(startDate; startDate <= endDayList[startMonth-1]; startDate++) {
+                        let data = new Object();
+                        data.date = startYear + "-" + startMonth + "-" + startDate;
+                        data.dayOfTheWeek = new Date(startYear,startMonth-1,startDate).getDay();
+
+                        let holiday = getHoliday(startYear, startMonth, startDate);
+                        switch (holiday[0]) {
+                            case "holiday" : data.holiday = "예" + "(" + holiday[1] + ")"; break;
+                            case "notHoliday" : data.holiday = "아니요" + "(" + holiday[1] + ")"; break;
+                            default : data.holiday = "아니요"; break;
+                        }
+                        reservationList.push(data);
+                        if(startYear === endYear && startMonth === endMonth && startDate === endDate) break;
+                    }
+                    startDate = 1;
+                }
+                startMonth = 1;
+        }
+    }
+
+    const drawingReservation = () => {
+        clearReservation();
+        let reservationString = "";
+        for(let value of reservationList) {
+            let reservationStringTemp = "<tr>";
+                reservationStringTemp += "<td style='text-align:center;'>"+value.date+"</td>";
+                value.dayOfTheWeek = convertDayOfTheWeekString(value.dayOfTheWeek);
+            if(value.dayOfTheWeek == "일요일") {
+                reservationStringTemp += "<td style='color:red; text-align:center;'>"+value.dayOfTheWeek+"</td>";
+                reservationStringTemp += "<td style='color:red; text-align:center;'>"+value.holiday+"</td>";
+            }else if(value.dayOfTheWeek == "토요일") {
+                reservationStringTemp += "<td style='color:blue; text-align:center;'>"+value.dayOfTheWeek+"</td>";
+                reservationStringTemp += "<td style='color:blue; text-align:center;'>"+value.holiday+"</td>";
+            }else {
+                reservationStringTemp += "<td style='text-align:center;'>"+value.dayOfTheWeek+"</td>";
+                reservationStringTemp += "<td style='text-align:center;'>"+value.holiday+"</td>";
+            } 
+            reservationStringTemp += "</tr>";
+            reservationString += reservationStringTemp;
+        }
+    
+        document.getElementById('reserve-tbody').innerHTML = reservationString;
+    }
+/*
+    const showReservation = () => {
+        let day = $('#selected-Day').text();
+        let year = $('#selected-Year').text();
+        let month = $('#selected-Month').text();
+        let date = $('#selected-Date').text();
+
+        let data = new Object();
+        data.date = year + "-" + month + "-" + date;
+        data.dayOfTheWeek = day;
+    
+        let holiday = getHoliday(year, month, date);
+        if(holiday[0] == "holiday") {
+            data.holiday = "예" + "(" + holiday[1] + ")";
+        }else if(holiday[0] == "notHoliday"){
+            data.holiday = "아니요" + "(" + holiday[1] + ")";
+        }else {
+            data.holiday = "아니요";
+        }
+        reserveArray.push(data);
+        clearReservation();
+    
+        let reservationString = "";
+        for(let value of reserveArray) {
+            let reservationStringTemp = "<tr>";
+                reservationStringTemp += "<td style='text-align:center;'>"+value.date+"</td>";
+            if(value.dayOfTheWeek == "일요일") {
+                reservationStringTemp += "<td style='color:red; text-align:center;'>"+value.dayOfTheWeek+"</td>";
+                reservationStringTemp += "<td style='color:red; text-align:center;'>"+value.holiday+"</td>";
+            }else if(value.dayOfTheWeek == "토요일") {
+                reservationStringTemp += "<td style='color:blue; text-align:center;'>"+value.dayOfTheWeek+"</td>";
+                reservationStringTemp += "<td style='color:blue; text-align:center;'>"+value.holiday+"</td>";
+            }else {
+                reservationStringTemp += "<td style='text-align:center;'>"+value.dayOfTheWeek+"</td>";
+                reservationStringTemp += "<td style='text-align:center;'>"+value.holiday+"</td>";
+            } 
+            reservationStringTemp += "</tr>";
+            reservationString += reservationStringTemp;
+        }
+        document.getElementById('reserve-tbody').innerHTML = reservationString;
+    }
+    */
+
 
     const endDayCheckAndReturn = (checkedDate) => {
         let endDay = 0;
@@ -149,24 +260,9 @@
         let theDate = new Date(makedDate.startYear, makedDate.startMonth, makedDate.startDay);
         let dayOfTheWeek = theDate.getDay();
         let lastDay = makedDate.endDay;
-        //let row = Math.ceil((dayOfTheWeek+lastDay)/7);
         let dayNumber = makedDate.startDay;
         let strTbodyInTrTd = "";
-        /*
-        for(let i = 1; i <= row; i++) {
-            strTbodyInTrTd += "<tr>";
-            for(let j = 1; j <= 7; j++) {
-                 if(i === 1 && j <= dayOfTheWeek || dayNumber > lastDay) {
-                     strTbodyInTrTd += "<td>&nbsp;</td>";
-                 }
-                 else {
-                     strTbodyInTrTd += "<td class='selectTd' onClick=selectDate(this)>"+dayNumber+"</td>";
-                     dayNumber++;
-                 }
-            }
-            strTbodyInTrTd += "</tr>";
-        }
-        */
+
         for(let i = 0; i < 6; i++) {
             strTbodyInTrTd += "<tr>";
             for(let j = 0; j < 7; j++) {
@@ -179,7 +275,6 @@
             }
             strTbodyInTrTd += "</tr>";
         }
-
         document.getElementById("calendar-tbody").innerHTML = strTbodyInTrTd;
     }
 
@@ -342,51 +437,6 @@
         return holiday;
     }
     
-    const showReservation = () => {
-        let day = $('#selected-Day').text();
-        let year = $('#selected-Year').text();
-        let month = $('#selected-Month').text();
-        let date = $('#selected-Date').text();
-    
-        let data = new Object();
-    
-        data.date = year + "-" + month + "-" + date;
-        data.dayOfTheWeek = day;
-    
-        let holiday = getHoliday(year, month, date);
-        if(holiday[0] == "holiday") {
-            data.holiday = "예" + "(" + holiday[1] + ")";
-        }else if(holiday[0] == "notHoliday"){
-            data.holiday = "아니요" + "(" + holiday[1] + ")";
-        }else {
-            data.holiday = "아니요";
-        }
-    
-        reserveArray.push(data);
-    
-        clearReservation();
-    
-        let reservationString = "";
-        for(let value of reserveArray) {
-            let reservationStringTemp = "<tr>";
-                reservationStringTemp += "<td style='text-align:center;'>"+value.date+"</td>";
-            if(value.dayOfTheWeek == "일요일") {
-                reservationStringTemp += "<td style='color:red; text-align:center;'>"+value.dayOfTheWeek+"</td>";
-                reservationStringTemp += "<td style='color:red; text-align:center;'>"+value.holiday+"</td>";
-            }else if(value.dayOfTheWeek == "토요일") {
-                reservationStringTemp += "<td style='color:blue; text-align:center;'>"+value.dayOfTheWeek+"</td>";
-                reservationStringTemp += "<td style='color:blue; text-align:center;'>"+value.holiday+"</td>";
-            }else {
-                reservationStringTemp += "<td style='text-align:center;'>"+value.dayOfTheWeek+"</td>";
-                reservationStringTemp += "<td style='text-align:center;'>"+value.holiday+"</td>";
-            } 
-            reservationStringTemp += "</tr>";
-            reservationString += reservationStringTemp;
-        }
-    
-        document.getElementById('reserve-tbody').innerHTML = reservationString;
-    }
-    
     const cleanSelectedDate = () => {
         $('#selected-Day').text("요일");
         $('#selected-Year').text("");
@@ -451,5 +501,10 @@
 
     const deleteReserveList = () => {
         reserveArray.length = 0;
+        clearReservation();
+    }
+
+    const deleteReservationList = () => {
+        reservationList.length = 0;
         clearReservation();
     }
