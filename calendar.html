@@ -19,34 +19,6 @@
 </head>
 
 <body>
-<!--
-    <div id="header-menu" class="header-menu">
-        <table class="header-table">
-            <thead>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><label>Business Level</label></td>
-                    <td><input type="text" /></td>
-                    <td>Screen ID</td>
-                    <td><input type="text" /></td>
-                    <td>UI pattern</td>
-                    <td><input type="text" /></td>
-                    <td>Designed Date</td>
-                    <td><input type="text" /></td>
-                </tr>
-                <tr>
-                    <td>Designer</td>
-                    <td><input type="text" /></td>
-                    <td>Screen Name</td>
-                    <td colspan="3"><input style="width:99% !important;" type="text" /></td>
-                    <td>Confirmed Date</td>
-                    <td><input type="text" /></td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
--->
 
     <div class="dateSearch-wrapper">
             <span id="period-wrapper" style="color:red !important">*<span style="color:black;">기간</span></span>
@@ -89,7 +61,7 @@
             </tbody>
         </table>
 
-        <table class="reserve-wrapper">
+        <table id="reserve-table" class="reserve-wrapper">
             <caption>Reservation</caption>
 
             <colgroup>
@@ -112,11 +84,8 @@
     </div>
     
     <div class="calenader-pagination">
-            <button onClick="prev()"><</button>
-            <button onClick="next()">></button>
-            <br/>
-            <span style="margin-left:40px;">pre</span>
-            <span style="margin-left:60px;">next</span>
+            <button class="prev-btn" onClick="prev()"><</button>
+            <button class="next-btn" onClick="next()">></button>
     </div>
     <input type="hidden" name="calendar-active" value="false"/>
 
@@ -127,8 +96,6 @@
         <span id="selected-Year"></span>년
         <span id="selected-Month"></span>월
         <span id="selected-Date"></span>일
-        <br/>
-        <button onClick="showReservation()">적용</button>
     </div>
     </footer>
     

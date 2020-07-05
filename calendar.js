@@ -38,7 +38,7 @@ $(() => {
     const tableInitialize = () => {
         let calendarTbody = "";
         let reserveTbody = "";
-            for(let i = 1; i<=5; i++) {
+            for(let i = 1; i<=6; i++) {
                 calendarTbody += "<tr>";
                 for(let j = 1; j<=7; j++) {
                     calendarTbody += "<td></td>";
@@ -57,7 +57,6 @@ $(() => {
     }
 
     const hourMinuteSecond = 24 * 60 * 60 * 1000;
-    //let reserveArray = new Array();
     let reservationList = new Array();
 
     const checkValidation = () => {
@@ -72,7 +71,6 @@ $(() => {
             alert("날짜를 선택해주세요.");
             return false;
         }
-        //deleteReserveList();
         deleteReservationList();
         
         let $startDate = new Date($('#startDate').val());
@@ -117,8 +115,9 @@ $(() => {
         let reservationPeriodDate = new Object();
         reservationPeriodDate.startDate = $('#startDate').val();
         reservationPeriodDate.endDate = $('#endDate').val();
-        displayReservationList(reservationPeriodDate);
-        drawingReservation();
+
+        //displayReservationList(reservationPeriodDate);
+        //drawingReservation();
     }
 
     const displayReservationList = (reservationPeriodDate) => {
@@ -188,49 +187,6 @@ $(() => {
     
         document.getElementById('reserve-tbody').innerHTML = reservationString;
     }
-/*
-    const showReservation = () => {
-        let day = $('#selected-Day').text();
-        let year = $('#selected-Year').text();
-        let month = $('#selected-Month').text();
-        let date = $('#selected-Date').text();
-
-        let data = new Object();
-        data.date = year + "-" + month + "-" + date;
-        data.dayOfTheWeek = day;
-    
-        let holiday = getHoliday(year, month, date);
-        if(holiday[0] == "holiday") {
-            data.holiday = "예" + "(" + holiday[1] + ")";
-        }else if(holiday[0] == "notHoliday"){
-            data.holiday = "아니요" + "(" + holiday[1] + ")";
-        }else {
-            data.holiday = "아니요";
-        }
-        reserveArray.push(data);
-        clearReservation();
-    
-        let reservationString = "";
-        for(let value of reserveArray) {
-            let reservationStringTemp = "<tr>";
-                reservationStringTemp += "<td style='text-align:center;'>"+value.date+"</td>";
-            if(value.dayOfTheWeek == "일요일") {
-                reservationStringTemp += "<td style='color:red; text-align:center;'>"+value.dayOfTheWeek+"</td>";
-                reservationStringTemp += "<td style='color:red; text-align:center;'>"+value.holiday+"</td>";
-            }else if(value.dayOfTheWeek == "토요일") {
-                reservationStringTemp += "<td style='color:blue; text-align:center;'>"+value.dayOfTheWeek+"</td>";
-                reservationStringTemp += "<td style='color:blue; text-align:center;'>"+value.holiday+"</td>";
-            }else {
-                reservationStringTemp += "<td style='text-align:center;'>"+value.dayOfTheWeek+"</td>";
-                reservationStringTemp += "<td style='text-align:center;'>"+value.holiday+"</td>";
-            } 
-            reservationStringTemp += "</tr>";
-            reservationString += reservationStringTemp;
-        }
-        document.getElementById('reserve-tbody').innerHTML = reservationString;
-    }
-    */
-
 
     const endDayCheckAndReturn = (checkedDate) => {
         let endDay = 0;
@@ -251,8 +207,6 @@ $(() => {
                 endDay = endDayList[checkedDate.startMonth];
                 return endDay;
         }
-
-        console.log("endDay two: " + endDay);
         return checkedDate.endDay;
     }
 
@@ -287,12 +241,7 @@ $(() => {
         let differenceDay = parseInt(( $endDate - $startDate ) / hourMinuteSecond);
         let differenceMonth = parseInt(( $endDate - $startDate ) / (hourMinuteSecond * 30));
         let differenceYear = parseInt(( $endDate - $startDate ) / (hourMinuteSecond * 30 * 12));
-        /*
-        if(validateDate(differenceYear, differenceMonth, differenceDay) == -1) {
-            alert("지정한 기간까지 입니다.");
-            return false;
-        }
-        */
+
         let prevYear = $startDate.getFullYear();
         let prevMonth = $startDate.getMonth()
         let prevDay = 1;
@@ -318,7 +267,7 @@ $(() => {
 
         let makedDate = new Object();
         makedDate.startYear = prevYear;
-        makedDate.startMonth = prevMonth-1; // new Date 에서 month 는 0 부터 시작하기 때문에 nextMonth -1  ex) 7-1 = 6(7월)
+        makedDate.startMonth = prevMonth-1;
         makedDate.startDay = prevDay;
         makedDate.endDay = checkedDate.endDay;
 
@@ -344,11 +293,10 @@ $(() => {
         }
 
         let nextYear = $startDate.getFullYear();
-        let nextMonth = $startDate.getMonth()+2;//다음 월
+        let nextMonth = $startDate.getMonth()+2;
         let nextDay = 1;
 
-        console.log("nextMonth:"+nextMonth);
-        if(nextMonth === 13) { //12월에서 다음 눌렀을 경우
+        if(nextMonth === 13) { 
             nextYear++;
             nextMonth = 1;
         }
@@ -369,7 +317,7 @@ $(() => {
 
         let makedDate = new Object();
         makedDate.startYear = nextYear;
-        makedDate.startMonth = nextMonth-1; // new Date 에서 month 는 0 부터 시작하기 때문에 nextMonth -1  ex) 7-1 = 6(7월)
+        makedDate.startMonth = nextMonth-1;
         makedDate.startDay = nextDay;
         makedDate.endDay = checkedDate.endDay;
 
@@ -498,12 +446,7 @@ $(() => {
             return true;
         }
     }
-
-    const deleteReserveList = () => {
-        reserveArray.length = 0;
-        clearReservation();
-    }
-
+    
     const deleteReservationList = () => {
         reservationList.length = 0;
         clearReservation();

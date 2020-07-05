@@ -4,10 +4,10 @@
 #header-menu table > tbody > tr > td > input{width:98%;}
 
 #calendar-wrapper { display: grid; grid-template-columns: repeat(2, 1fr); grid-auto-rows: auto;}
-#calendar-wrapper table{ border-collapse:collapse; border-spacing:0;}
+#calendar-wrapper table{ border-collapse:collapse; border-spacing:0; width:700px;}
 #calendar-wrapper .calendar-table > thead { border-collapse:collapse; border-spacing:0;}
-#calendar-wrapper .calendar-table > tbody > tr { height:100px;}
-#calendar-wrapper .calendar-table > thead > tr > th {border-left: 1px solid black; background-color:#E6E6E6;}
+#calendar-wrapper .calendar-table > tbody > tr { height:100px; background-color:#81DAF5;}
+#calendar-wrapper .calendar-table > thead > tr > th {border-left: 1px solid black; background-color:#5882FA; font-size:25px;}
 #calendar-wrapper caption {font-weight: bold; font-size:20px;}
 #calendar-wrapper .reserve-wrapper {width: 80%; margin-left: 60px;}
 #calendar-wrapper .reserve-wrapper > tbody > tr {height:70px;}
@@ -15,11 +15,10 @@
 
 .ui-datepicker-trigger{cursor: pointer;}
 .hasDatepicker{cursor: pointer;}
+.calenader-pagination {margin-left : 264px; margin-top:20px;}
+.calenader-pagination > button {border-radius:3px;background-color: #008CBA; border: none; color: white; padding: 15px 32px;text-align: center;text-decoration: none; display: inline-block;font-size: 16px;margin: 4px 2px;cursor: pointer;}
 
-.calenader-pagination {margin:20px 0px 30px 250px; position: absolute;}
-.calenader-pagination > button { padding: 20px; margin-left: 30px;}
-
-.selected-date { font-size: 20px; margin:150px 0px 0px 8px}
+.selected-date { font-size: 20px; margin:80px 0px 0px 8px}
 .selected-date > span { margin-left:80px;}
 .selected-date > button { margin-left: 650px; font-size: 20px; padding:10px; width:80px; margin-top:10px;}
 
@@ -30,3 +29,5 @@
 
 #calendar-wrapper #calendar-tbody .selectTd {font-weight:normal; text-align:center; cursor:pointer; font-size:25px;}
 #calendar-wrapper #calendar-tbody .selectTdActive{font-weight:bold; text-align:center; cursor:pointer; font-size:25px;}
+
+#reserve-table {display:none;}
