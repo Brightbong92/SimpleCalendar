@@ -9,7 +9,7 @@
 #calendar-wrapper .calendar-table > tbody > tr { height:100px; background-color:#81DAF5;}
 #calendar-wrapper .calendar-table > thead > tr > th {border-left: 1px solid black; background-color:#5882FA; font-size:25px;}
 #calendar-wrapper caption {font-weight: bold; font-size:20px;}
-#calendar-wrapper .reserve-wrapper {width: 80%; margin-left: 60px;}
+#calendar-wrapper .reserve-wrapper {width: 500px; margin-left: 40px;}
 #calendar-wrapper .reserve-wrapper > tbody > tr {height:70px;}
 #calendar-wrapper .reserve-wrapper > thead > tr > th {border-left:1px solid black;}
 
@@ -18,8 +18,8 @@
 .calenader-pagination {margin-left : 264px; margin-top:20px;}
 .calenader-pagination > button {border-radius:3px;background-color: #008CBA; border: none; color: white; padding: 15px 32px;text-align: center;text-decoration: none; display: inline-block;font-size: 16px;margin: 4px 2px;cursor: pointer;}
 
-.selected-date { font-size: 20px; margin:80px 0px 0px 8px}
-.selected-date > span { margin-left:80px;}
+.selected-date { font-size: 20px; margin:80px 0px 0px 0px}
+.selected-date > span { margin-left:60px;}
 .selected-date > button { margin-left: 650px; font-size: 20px; padding:10px; width:80px; margin-top:10px;}
 
 .dateSearch-wrapper { margin:20px 0px 20px 0px;}
@@ -30,4 +30,6 @@
 #calendar-wrapper #calendar-tbody .selectTd {font-weight:normal; text-align:center; cursor:pointer; font-size:25px;}
 #calendar-wrapper #calendar-tbody .selectTdActive{font-weight:bold; text-align:center; cursor:pointer; font-size:25px;}
 
-#reserve-table {display:none;}
+#reserve-table-wrapper{width:700px;  height:700px; overflow:auto;}
+#reserve-table > thead > tr > th {border-left: 1px solid black; background-color:#5882FA; font-size:25px;}
+#reserve-table > tbody > tr { height:100px; background-color:#81DAF5;}

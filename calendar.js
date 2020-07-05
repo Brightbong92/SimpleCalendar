@@ -116,8 +116,8 @@ $(() => {
         reservationPeriodDate.startDate = $('#startDate').val();
         reservationPeriodDate.endDate = $('#endDate').val();
 
-        //displayReservationList(reservationPeriodDate);
-        //drawingReservation();
+        displayReservationList(reservationPeriodDate);
+        drawingReservation();
     }
 
     const displayReservationList = (reservationPeriodDate) => {
@@ -167,6 +167,7 @@ $(() => {
     const drawingReservation = () => {
         clearReservation();
         let reservationString = "";
+
         for(let value of reservationList) {
             let reservationStringTemp = "<tr>";
                 reservationStringTemp += "<td style='text-align:center;'>"+value.date+"</td>";
@@ -184,7 +185,7 @@ $(() => {
             reservationStringTemp += "</tr>";
             reservationString += reservationStringTemp;
         }
-    
+        
         document.getElementById('reserve-tbody').innerHTML = reservationString;
     }
 
